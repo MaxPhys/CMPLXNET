@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+# Define the creation of the small-world network using the Watt-Strogatz algorithm
 def watts_strogatz_model(N, k, p):
     # Create a regular ring lattice
     G = np.zeros((N, N), dtype=int)
@@ -10,7 +11,7 @@ def watts_strogatz_model(N, k, p):
             G[i, (i+j) % N] = 1
             G[i, (i-j) % N] = 1
 
-    # Rewire edges with probability p
+    # Rewire the edges with rewiring probability p
     for i in range(N):
         for j in range(1, k // 2 + 1):
             if np.random.rand() < p:
@@ -25,6 +26,7 @@ def watts_strogatz_model(N, k, p):
     return G
 
 
+# Define the function for measuring the clustering coefficient, as explained in the assigment
 def measure_clustering_coefficient(G):
     N = len(G)
     num_triangles = 0
@@ -43,6 +45,7 @@ def measure_clustering_coefficient(G):
         return 3.0 * num_triangles / num_connected_triplets
 
 
+# Define the function to inizialize the states of the networks nodes
 def initialize_states(N, initial_fraction_infected):
     # Initialize the state of nodes (0 for susceptible, 1 for infected)
     num_infected = int(initial_fraction_infected * N)
@@ -52,6 +55,7 @@ def initialize_states(N, initial_fraction_infected):
     return states
 
 
+# Define the SIS model dynamics that we run on the WS model
 def sis_dynamics(G, initial_states, lambda_val, delta, num_steps):
     N = len(G)
     states = initial_states.copy()
@@ -92,6 +96,7 @@ def sis_dynamics(G, initial_states, lambda_val, delta, num_steps):
     return frac_infected
 
 
+# Define the function for the steady state prevalence
 def steady_state_prevalence(G, initial_states, lambda_values, delta, num_steps):
     N = len(G)
     p_values = [0, 0.5, 1]
@@ -111,9 +116,10 @@ def steady_state_prevalence(G, initial_states, lambda_values, delta, num_steps):
     return steady_state_prevalence_values
 
 
+# Main function definition to execute
 def main():
-    N = 10**4  # Number of nodes
-    k = 4      # Average degree
+    N = 10**4  # Number of nodes (given)
+    k = 4      # Average degree (given)
     c0 = 0.25  # Initial fraction of infected nodes
     lambda_values = [0, 0.01, 0.1, 0.5, 1]
     delta = 1
@@ -139,11 +145,12 @@ def main():
     plt.grid(True)
     plt.show()
 
-    # Plot the SIS dynamics for different lambda values in three separate plots
+    # Plot the SIS dynamics for different lambda values in three separate plots, each one for one of the given rewiring
+    # probabilities that were given in the task
     num_colors = len(lambda_values)
     colors = plt.cm.rainbow(np.linspace(0, 1, num_colors))
 
-    for p in [0, 0.5, 1]:
+    for p in [0, 0.5, 1]:  #
         G = watts_strogatz_model(N, k, p)
         initial_states = initialize_states(N, c0)
 

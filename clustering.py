@@ -1,11 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
-import networkx as nx
-import random
-from scipy import stats
 
 
+# Define the creation of the small-world network using the Watt-Strogatz algorithm
 def watts_strogatz_model(N, k, p):
     # Create a regular ring lattice
     G = np.zeros((N, N), dtype=int)
@@ -29,6 +26,7 @@ def watts_strogatz_model(N, k, p):
     return G
 
 
+# Define the function for measuring the clustering coefficient, as explained in the assigment
 def measure_clustering_coefficient(G):
     N = len(G)
     num_triangles = 0
@@ -47,6 +45,7 @@ def measure_clustering_coefficient(G):
         return 3.0 * num_triangles / num_connected_triplets
 
 
+# Define the degree distribution function
 def degree_distribution(G):
     N = len(G)
     degrees = np.sum(G, axis=1)
@@ -55,6 +54,7 @@ def degree_distribution(G):
     return degree_probs
 
 
+# Define the function to inizialize the states of the networks nodes
 def initialize_states(N, initial_fraction_infected):
     # Initialize the state of nodes (0 for susceptible, 1 for infected)
     num_infected = int(initial_fraction_infected * N)
@@ -64,6 +64,7 @@ def initialize_states(N, initial_fraction_infected):
     return states
 
 
+# Define the SIS model dynamics that we run on the WS model
 def sis_dynamics(G, initial_states, lambda_val, delta, num_steps):
     N = len(G)
     states = initial_states.copy()
@@ -92,6 +93,7 @@ def sis_dynamics(G, initial_states, lambda_val, delta, num_steps):
     return frac_infected
 
 
+# Main function definition to execute
 def main():
     N = 10**4  # Number of nodes
     k = 4      # Average degree
@@ -101,22 +103,22 @@ def main():
     delta = 1
     num_steps = 30
 
-    # Measure clustering coefficient and degree distribution for different p values
+    # Measure the clustering coefficient and degree distribution for different p values
     clustering_coefficients = []
     degree_distributions = []
 
     for p in p_values:
         G = watts_strogatz_model(N, k, p)
 
-        # Measure clustering coefficient
+        # Measure the clustering coefficient
         clustering_coefficient = measure_clustering_coefficient(G)
         clustering_coefficients.append(clustering_coefficient)
 
-        # Measure degree distribution
+        # Measure the degree distribution
         degree_probs = degree_distribution(G)
         degree_distributions.append(degree_probs)
 
-    # Calculate the clustering coefficient ratio (C(p)/C(0))
+    # Calculate the clustering coefficient ratio (C(p)/C(0)) (normalized)
     clustering_coefficients_normalized = [cc / clustering_coefficients[0] for cc in clustering_coefficients]
 
     # Plot the clustering coefficient as a function of p in log scale
